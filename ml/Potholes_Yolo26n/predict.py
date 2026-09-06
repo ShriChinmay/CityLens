@@ -1,29 +1,13 @@
-"""Minimal, self-contained pothole detector — drop-in module for the backend team.
+"""Pothole detector for images and videos.
 
-How the backend uses it
------------------------
-    from predict import PotholePredictor
+Public API:
+    predict(source)        image or video -> list (image) or dict (video)
+    detect(image)          image -> list of potholes
+    detect_video(video)    video -> summary dict
+    PotholePredictor()     reusable loaded model
 
-    det = PotholePredictor()                      # loads the model ONCE
-    results = det.predict("/path/to/image.jpg")   # -> list of pothole dicts
-
-    # or the even-simpler function form:
-    from predict import detect
-    results = detect("/path/to/image.jpg")
-
-Both return JSON-friendly data:
-    [
-        {"class": "pothole", "confidence": 0.87, "bbox": [x1, y1, x2, y2]},
-        ...
-    ]
-
-Videos:
-    stats = det.predict_video("road.mp4")   # writes an annotated mp4 + JSON summary
-
-The model file lives next to this module, so it works no matter which
-directory the backend runs it from.
+Model file (.pt or .onnx) is resolved relative to this file.
 """
-
 from __future__ import annotations
 
 import json
