@@ -340,29 +340,6 @@ def predict(
     return _PREDICTOR.predict(source, conf=conf, iou=iou, imgsz=imgsz, save_dir=dir_out, gps=gps)
 
 
-def predict_images(
-    paths: list[str | Path],
-    *,
-    conf: float = DEFAULT_CONF,
-    iou: float = DEFAULT_IOU,
-    imgsz: int = DEFAULT_IMGSZ,
-) -> list[dict[str, Any]] | list[list[dict[str, Any]]]:
-    """Team contract: ``predict_images([p]) -> [{bbox, conf}]``.
-
-    Takes a list of image paths, returns per-image detections in the
-    lightweight ``{bbox, conf}`` format (bbox = [x1,y1,x2,y2] pixels).
-    Single-image input returns a flat list; multi-image returns list-of-lists.
-    """
-    global _PREDICTOR
-    if _PREDICTOR is None:
-        _PREDICTOR = PotholePredictor()
-    out: list[list[dict[str, Any]]] = []
-    for p in paths:
-        dets = _PREDICTOR.predict(p, conf=conf, iou=iou, imgsz=imgsz)
-        out.append([{"bbox": d["bbox"], "conf": d["confidence"]} for d in dets])
-    return out[0] if len(out) == 1 else out
-
-
 if __name__ == "__main__":  # quick manual test: python predict.py <image>
     import json
     import sys
