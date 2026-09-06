@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+runs/
+outputs/
+val*/
+detect/
+*.avi
+*.mp4
+!weights/best.pt
+.DS_Store
+.venv/
+venv/
+metrics_run.json
