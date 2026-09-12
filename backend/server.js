@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-require("dotenv").config();
+
 
 console.log({
     user: process.env.DB_USER,
