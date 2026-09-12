@@ -32,20 +32,60 @@ async function create(event) {
     const result = await pool.query(query, values);
     return result.rows[0];
 }
-async function getAllEvents() {
-    const query = `
+
+async function getAllEvents(filters = {}) {
+    let query = `
         SELECT *
         FROM events
-        ORDER BY detected_at DESC;
     `;
 
-    const result = await pool.query(query);
+    const conditions = [];
+    const values = [];
+
+    if (filters.event_type) {
+        values.push(filters.event_type);
+        conditions.push(`event_type = $${values.length}`);
+    }
+
+    if (filters.severity) {
+        values.push(filters.severity);
+        conditions.push(`severity = $${values.length}`);
+    }
+
+    if (filters.bus_id) {
+        values.push(filters.bus_id);
+        conditions.push(`bus_id = $${values.length}`);
+    }
+
+    if (filters.camera_id) {
+        values.push(filters.camera_id);
+        conditions.push(`camera_id = $${values.length}`);
+    }
+
+    if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    query += ` ORDER BY detected_at DESC;`;
+
+    const result = await pool.query(query, values);
 
     return result.rows;
 }
+async function getEventById(id) {
+    const query = `
+        SELECT *
+        FROM events
+        WHERE id = $1;
+    `;
 
+    const result = await pool.query(query, [id]);
+
+    return result.rows[0];
+}
 
 module.exports = {
     create,
-    getAllEvents
+    getAllEvents,
+    getEventById
 };
