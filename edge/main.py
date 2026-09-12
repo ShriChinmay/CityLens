@@ -1,86 +1,48 @@
-import time
-
 from edge.camera.video_source import VideoSource
 from edge.perception.detector import Detector
-from edge.gps.simulator import GPSSimulator
-from edge.events.event_generator import EventGenerator
-from edge.communication.communication_manager import CommunicationManager
+from edge.tracking.tracker import Tracker
+from edge.events.event_manager import EventManager
 
 
-VIDEO_PATH = "data/videos/pothole_test.mp4"
-MODEL_PATH = "ml/Potholes_Yolo26n/models/yolo26n_pothole_80e.pt"
-BUS_ID = 1
-CAMERA_ID = 1
+VIDEO_PATH = "C:/Users/acer/Desktop/CityLens/data/videos/pothole_test.mp4"
+MODEL_PATH = "C:/Users/acer/Desktop/CityLens/ml/Potholes_Yolo26n/models/yolo26n_pothole_80e.pt"
 
 
 def main():
-    # Initialize components
     video = VideoSource(VIDEO_PATH)
-
-    
     detector = Detector(MODEL_PATH)
+    tracker = Tracker()
+    event_manager = EventManager(min_frames=3)
 
-    gps = GPSSimulator(
-        start_lat=28.6139,
-        start_lon=77.2090,
-        end_lat=28.6200,
-        end_lon=77.2200,
-        duration=60
-    )
-
-    event_generator = EventGenerator(
-        bus_id=BUS_ID,
-        camera_id=CAMERA_ID
-    )
-    # TODO: Periodically retry pending events when network connectivity
-    # is unavailable or restored.
-    communication = CommunicationManager()
-
-    # Connect to MQTT
-    communication.connect()
-
-    start_time = time.time()
+    frame_number = 0
 
     try:
         while True:
-
-            # Read frame
             frame = video.read()
 
             if frame is None:
                 break
-            # TODO: Use the video's actual frame timestamp instead of wall-clock
-            # processing time for accurate GPS/event synchronization.
-            # Calculate elapsed video-processing time
-            elapsed_time = time.time() - start_time
 
-            # Get GPS location
-            latitude, longitude = gps.get_location(elapsed_time)
+            frame_number += 1
 
-            # Run detection
-            # TODO: Add object/event tracking before event generation.
             detections = detector.detect(frame)
+            tracked_detections = tracker.update(detections)
 
-            # Generate and send events
-            for detection in detections:
+            confirmed_events = event_manager.process(
+                tracked_detections
+            )
 
-                event = event_generator.generate_event(
-                    detection,
-                    latitude,
-                    longitude
+            for event in confirmed_events:
+                print(
+                    f"\nEVENT CONFIRMED | "
+                    f"Frame: {frame_number} | "
+                    f"Track ID: {event['track_id']} | "
+                    f"Class: {event['class']} | "
+                    f"Confidence: {event['confidence']:.2f}"
                 )
-
-                if event is not None:
-                    communication.send_event(event)
-
-                    print("Event generated:")
-                    print(event)
-
-                    
 
     finally:
         video.release()
-        communication.close()
 
 
 if __name__ == "__main__":
