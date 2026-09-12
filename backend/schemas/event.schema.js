@@ -24,4 +24,28 @@ const eventSchema = z.object({
     metadata: z.record(z.string(), z.any()).optional()
 });
 
-module.exports = eventSchema;
+const eventQuerySchema = z.object({
+    event_type: z.enum([
+        "POTHOLE",
+        "DAMAGED_ROAD",
+        "WATERLOGGING",
+        "ACCIDENT",
+    ]).optional(),
+
+    severity: z.enum([
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+    ]).optional(),
+
+    bus_id: z.coerce.number().int().positive().optional(),
+
+    camera_id: z.coerce.number().int().positive().optional()
+});
+
+
+module.exports = {
+    eventSchema,
+    eventQuerySchema
+};
