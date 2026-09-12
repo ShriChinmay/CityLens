@@ -8,7 +8,7 @@ from edge.communication.communication_manager import CommunicationManager
 
 
 VIDEO_PATH = "data/videos/pothole_test.mp4"
-
+MODEL_PATH = "ml/Potholes_Yolo26n/models/yolo26n_pothole_80e.pt"
 BUS_ID = 1
 CAMERA_ID = 1
 
@@ -17,8 +17,8 @@ def main():
     # Initialize components
     video = VideoSource(VIDEO_PATH)
 
-    # TODO: Load the production detection model and its configuration.
-    detector = Detector()
+    
+    detector = Detector(MODEL_PATH)
 
     gps = GPSSimulator(
         start_lat=28.6139,

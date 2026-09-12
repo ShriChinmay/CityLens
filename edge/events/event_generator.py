@@ -16,9 +16,10 @@ class EventGenerator:
         confidence = detection["confidence"]
 
         current_time = time.time()
-        # TODO: Replace simple time-based cooldown with proper temporal and spatial
-        # deduplication using object/event tracking.
-        # Prevent repeated events for the same type
+
+        # TODO: Replace simple time-based cooldown with proper temporal and
+        # spatial deduplication using object/event tracking.
+        # Prevent repeated events for the same type.
         if event_type in self.last_event_time:
             elapsed = current_time - self.last_event_time[event_type]
 
@@ -33,15 +34,19 @@ class EventGenerator:
             "bus_id": self.bus_id,
             "camera_id": self.camera_id,
             "event_type": event_type,
-            # TODO: Replace confidence-based severity with a proper severity model
-            # based on detection characteristics and domain requirements.
+
+            # TODO: Replace confidence-based severity with a proper severity
+            # model based on detection characteristics and domain requirements.
             "confidence": confidence,
             "severity": severity,
-            # TODO: Use the video/frame timestamp so event time stays synchronized
-            # with the simulated GPS timeline.
+
+            # TODO: Use the video/frame timestamp so event time stays
+            # synchronized with the simulated GPS timeline.
             "detected_at": datetime.now(timezone.utc).isoformat(),
+
             "latitude": latitude,
             "longitude": longitude,
+
             "metadata": {
                 "bbox": detection.get("bbox")
             }
@@ -50,6 +55,7 @@ class EventGenerator:
         return event
 
     def _get_event_type(self, detection_class):
+
         event_types = {
             "pothole": "POTHOLE",
             "damaged_road": "DAMAGED_ROAD",
@@ -65,9 +71,12 @@ class EventGenerator:
         return event_types[detection_class]
 
     def _get_severity(self, confidence):
+
         if confidence >= 0.90:
             return "HIGH"
+
         elif confidence >= 0.75:
             return "MEDIUM"
+
         else:
             return "LOW"
