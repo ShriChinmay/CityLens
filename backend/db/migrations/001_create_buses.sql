@@ -1,0 +1,13 @@
+CREATE TABLE buses (
+    id SERIAL PRIMARY KEY,
+
+    bus_number VARCHAR(50) NOT NULL UNIQUE,
+
+    operator VARCHAR(100),
+
+    model VARCHAR(100),
+
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

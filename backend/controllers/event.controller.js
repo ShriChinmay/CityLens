@@ -13,7 +13,20 @@ async function createEvent(req, res, next) {
         next(error);
     }
 }
+async function getAllEvents(req, res, next) {
+    try {
+        const events = await eventService.getAllEvents();
 
+        res.status(200).json({
+            count: events.length,
+            events
+        });
+
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
-    createEvent
+    createEvent,
+    getAllEvents
 };
