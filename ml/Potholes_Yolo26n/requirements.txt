@@ -1,6 +1,9 @@
-# ML module dependencies (only what's needed to run inference)
-# .pt (backend, PyTorch): needs ultralytics + opencv
+# ML / computer vision
 ultralytics>=8.4,<9
 opencv-python>=4.8
-# .onnx (edge / lightweight): add onnxruntime to run the ONNX model
+
+# ONNX inference
 onnxruntime>=1.17
+
+# MQTT communication
+paho-mqtt>=2.0,<3
