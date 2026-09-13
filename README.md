@@ -269,7 +269,6 @@ MQTT_BROKER_URL=mqtt://localhost:1883
 MQTT_TOPIC=citylens/events
 ```
 
-**Do not commit `.env`.**
 
 A real deployment should use secure secret management rather than
 storing credentials in files.
