@@ -1,0 +1,12 @@
+# ML / computer vision
+ultralytics>=8.4,<9
+opencv-python>=4.8
+
+# ONNX inference
+onnxruntime>=1.17
+
+# MQTT communication
+paho-mqtt>=2.0,<3
+
+# HTTP communication
+requests>=2.31

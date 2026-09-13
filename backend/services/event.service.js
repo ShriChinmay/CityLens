@@ -11,9 +11,10 @@ async function create(event) {
             detected_at,
             latitude,
             longitude,
-            metadata
+            metadata,
+            evidence_url
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         RETURNING *;
     `;
 
@@ -26,7 +27,8 @@ async function create(event) {
         event.detected_at,
         event.latitude,
         event.longitude,
-        event.metadata || {}
+        event.metadata || {},
+        event.evidence_url || null
     ];
 
     const result = await pool.query(query, values);

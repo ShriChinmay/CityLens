@@ -95,6 +95,9 @@ dist
 # vuepress v2.x temp directory
 .temp
 
+# Uploaded evidence images
+uploads/evidence/
+
 # Sveltekit cache directory
 .svelte-kit/
 

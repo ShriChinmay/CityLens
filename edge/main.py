@@ -8,7 +8,7 @@ from edge.events.event_generator import EventGenerator
 from edge.gps.simulator import GPSSimulator
 from edge.storage.local_store import LocalStore
 from edge.communication.mqtt_client import MQTTClient
-
+from edge.communication.evidence_uploader import upload_evidence
 
 # --------------------------------------------------
 # Configuration
@@ -159,6 +159,18 @@ try:
             if event is None:
                 continue
 
+            # --------------------------------------
+            # 5a. Upload evidence image
+            # --------------------------------------
+
+            evidence_url = upload_evidence(frame)
+
+            if evidence_url:
+                event["evidence_url"] = evidence_url
+            else:
+                # Evidence is optional; do not lose the event
+                # if the image upload fails.
+                event["evidence_url"] = None
             print()
             print("EVENT GENERATED")
             print(

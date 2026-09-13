@@ -21,7 +21,8 @@ const eventSchema = z.object({
     latitude: z.number().min(-90).max(90),
     longitude: z.number().min(-180).max(180),
 
-    metadata: z.record(z.string(), z.any()).optional()
+    metadata: z.record(z.string(), z.any()).optional(),
+    evidence_url: z.string().nullable().optional()
 });
 
 const eventQuerySchema = z.object({
