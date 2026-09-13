@@ -8,6 +8,19 @@ const evidenceRoutes = require("./routes/evidence.routes");
 const errorHandler = require("./middlewares/error.middleware");
 const app = express();
 const path = require("path");
+
+const fs = require("fs");
+const path = require("path");
+
+const evidenceDir = path.join(
+    __dirname,
+    "uploads/evidence"
+);
+
+fs.mkdirSync(evidenceDir, {
+    recursive: true
+});
+
 app.use(express.json());
 
 app.get("/health", (req, res) => {

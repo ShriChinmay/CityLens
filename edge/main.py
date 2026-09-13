@@ -9,13 +9,15 @@ from edge.gps.simulator import GPSSimulator
 from edge.storage.local_store import LocalStore
 from edge.communication.mqtt_client import MQTTClient
 from edge.communication.evidence_uploader import upload_evidence
+from pathlib import Path
 
-# --------------------------------------------------
-# Configuration
-# --------------------------------------------------
+ROOT_DIR = Path(__file__).resolve().parent.parent
 
-VIDEO_PATH = r"C:\Users\acer\Desktop\CityLens\data\videos\pothole_test.mp4"
-MODEL_PATH = "ml/Potholes_Yolo26n/models/yolo26n_pothole_80e.pt"
+VIDEO_PATH = ROOT_DIR / "data/videos/pothole_test.mp4"
+MODEL_PATH = (
+    ROOT_DIR /
+    "ml/Potholes_Yolo26n/models/yolo26n_pothole_80e.pt"
+)
 
 BUS_ID = 1
 CAMERA_ID = 1
