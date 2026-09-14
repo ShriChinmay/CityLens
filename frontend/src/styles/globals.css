@@ -1,96 +1,71 @@
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
 
-  /* Restrained neutral dark operations palette */
-  --color-canvas: #0B0D10;
-  --color-surface: #111419;
-  --color-surface-2: #15191F;
-  --color-surface-3: #1A1F26;
-  --color-line: rgba(255, 255, 255, 0.07);
-  --color-line-strong: rgba(255, 255, 255, 0.14);
+  /* Government portal light theme */
+  --color-canvas: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8fafc;
+  --color-surface-3: #eef2f6;
 
-  /* Primary text, Secondary text, Muted text */
-  --color-ink: #E6E8EB;
-  --color-ink-muted: #9AA1AA;
-  --color-ink-subtle: #69717C;
+  --color-line: #d9dee5;
+  --color-line-strong: #c3cad3;
 
-  /* Restrained operational blue accent (used sparingly) */
-  --color-accent: #3B82F6;
-  --color-accent-hover: #2563EB;
-  --color-accent-soft: rgba(59, 130, 246, 0.12);
-  --color-accent-line: rgba(59, 130, 246, 0.3);
+  --color-ink: #17202a;
+  --color-ink-muted: #52606d;
+  --color-ink-subtle: #6b7785;
 
-  /* Brand aliases pointing to accent */
-  --color-brand: #3B82F6;
-  --color-brand-hover: #2563EB;
-  --color-brand-soft: rgba(59, 130, 246, 0.12);
+  /* Primary civic/government blue */
+  --color-accent: #1558a6;
+  --color-accent-hover: #0f4787;
+  --color-accent-soft: #e8f0fa;
+  --color-accent-line: #b8cce3;
 
-  /* Semantic Severity Colors (Strict operational meaning) */
-  --color-critical: #ef4444;
-  --color-critical-soft: rgba(239, 68, 68, 0.12);
-  --color-critical-line: rgba(239, 68, 68, 0.25);
+  --color-brand: #1558a6;
+  --color-brand-hover: #0f4787;
+  --color-brand-soft: #e8f0fa;
 
-  --color-high: #f97316;
-  --color-high-soft: rgba(249, 115, 22, 0.12);
-  --color-high-line: rgba(249, 115, 22, 0.25);
+  /* Severity */
+  --color-critical: #b42318;
+  --color-critical-soft: #fef3f2;
+  --color-critical-line: #f3b5b0;
 
-  --color-medium: #eab308;
-  --color-medium-soft: rgba(234, 179, 8, 0.12);
-  --color-medium-line: rgba(234, 179, 8, 0.25);
+  --color-high: #c4320a;
+  --color-high-soft: #fff4ed;
+  --color-high-line: #f4c1aa;
 
-  --color-low: #22c55e;
-  --color-low-soft: rgba(34, 197, 94, 0.12);
-  --color-low-line: rgba(34, 197, 94, 0.25);
+  --color-medium: #a15c00;
+  --color-medium-soft: #fff8e6;
+  --color-medium-line: #efd58f;
 
-  /* Restrained border-radius scale (no oversized rounded corners) */
-  --radius-control: 5px;
+  --color-low: #18794e;
+  --color-low-soft: #edf8f2;
+  --color-low-line: #b8dfca;
+
+  /* Keep these restrained */
+  --radius-control: 4px;
   --radius-card: 6px;
   --radius-feature: 8px;
 }
+/* :root {
+  --gov-blue: #0b4f8a;
+  --gov-blue-dark: #083b68;
+  --gov-blue-light: #eaf3fb;
 
-.dark, :root {
-  --color-canvas: #0B0D10;
-  --color-surface: #111419;
-  --color-surface-2: #15191F;
-  --color-surface-3: #1A1F26;
-  --color-line: rgba(255, 255, 255, 0.07);
-  --color-line-strong: rgba(255, 255, 255, 0.14);
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
 
-  --color-ink: #E6E8EB;
-  --color-ink-muted: #9AA1AA;
-  --color-ink-subtle: #69717C;
+  --background: #f5f7fa;
+  --surface: #ffffff;
 
-  --color-accent: #3B82F6;
-  --color-accent-hover: #2563EB;
-  --color-accent-soft: rgba(59, 130, 246, 0.12);
-  --color-accent-line: rgba(59, 130, 246, 0.3);
+  --border: #d9dee5;
 
-  --color-brand: #3B82F6;
-  --color-brand-hover: #2563EB;
-  --color-brand-soft: rgba(59, 130, 246, 0.12);
-
-  --color-critical: #ef4444;
-  --color-critical-soft: rgba(239, 68, 68, 0.12);
-  --color-critical-line: rgba(239, 68, 68, 0.25);
-
-  --color-high: #f97316;
-  --color-high-soft: rgba(249, 115, 22, 0.12);
-  --color-high-line: rgba(249, 115, 22, 0.25);
-
-  --color-medium: #eab308;
-  --color-medium-soft: rgba(234, 179, 8, 0.12);
-  --color-medium-line: rgba(234, 179, 8, 0.25);
-
-  --color-low: #22c55e;
-  --color-low-soft: rgba(34, 197, 94, 0.12);
-  --color-low-line: rgba(34, 197, 94, 0.25);
-}
+  --success: #237a57;
+  --warning: #b7791f;
+  --danger: #b42318;
+} */
 
 @layer base {
   * {
@@ -107,8 +82,8 @@
     background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 13px;
-    line-height: 1.45;
+    font-size: 14px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -170,48 +145,45 @@
 }
 
 .leaflet-popup-content-wrapper {
-  background: #111419 !important;
+  background: #ffffff !important;
   color: var(--color-ink) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--color-line) !important;
   border-radius: 6px !important;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 4px 16px rgba(20, 35, 50, 0.12) !important;
   padding: 1px;
 }
 
 .leaflet-popup-tip {
-  background: #111419 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #ffffff !important;
 }
 
 .leaflet-popup-content {
   margin: 10px 12px !important;
   line-height: 1.4 !important;
 }
-
 .leaflet-control-zoom {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid var(--color-line) !important;
   border-radius: 4px !important;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 2px 6px rgba(20, 35, 50, 0.12) !important;
 }
 
 .leaflet-control-zoom a {
-  background-color: #111419 !important;
+  background-color: #ffffff !important;
   color: var(--color-ink) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  width: 28px !important;
-  height: 28px !important;
-  line-height: 28px !important;
+  border-bottom: 1px solid var(--color-line) !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
   font-size: 14px !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #1A1F26 !important;
-  color: #ffffff !important;
+  background-color: var(--color-surface-3) !important;
+  color: var(--color-brand) !important;
 }
-
 .leaflet-control-attribution {
-  background: rgba(11, 13, 16, 0.8) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
   color: var(--color-ink-subtle) !important;
   font-size: 9px !important;
   padding: 2px 6px !important;
@@ -221,10 +193,10 @@
   color: var(--color-ink-muted) !important;
 }
 
-/* Muted GIS Map Tiles: Desaturated, low contrast, quiet background */
+/* Muted GIS Map Tiles: Desaturated, low contrast, quiet background
 .map-tiles-muted {
   filter: brightness(0.65) invert(1) contrast(2.2) hue-rotate(195deg) saturate(0.18) brightness(0.72);
-}
+} */
 
 .font-display {
   font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;

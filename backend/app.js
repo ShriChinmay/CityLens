@@ -10,7 +10,6 @@ const app = express();
 const path = require("path");
 
 const fs = require("fs");
-const path = require("path");
 
 const evidenceDir = path.join(
     __dirname,
