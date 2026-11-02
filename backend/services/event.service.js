@@ -11,6 +11,14 @@ const SEVERITY_RANK = {
     CRITICAL: 4
 };
 
+const ALLOWED_STATUS_TRANSITIONS = {
+    DETECTED: ["VERIFIED"],
+    VERIFIED: ["WORK_ORDER_ISSUED"],
+    WORK_ORDER_ISSUED: ["RESOLVED"],
+    RESOLVED: ["AUDITED"],
+    AUDITED: []
+};
+
 /**
  * Calculate the highest severity reported for an incident.
  *
@@ -367,8 +375,68 @@ async function getEventById(id) {
     return result.rows[0];
 }
 
+async function updateEventStatus(id, newStatus) {
+    const client = await pool.connect();
+
+    try {
+        await client.query("BEGIN");
+
+        const result = await client.query(
+            `SELECT id, status
+             FROM events
+             WHERE id = $1
+             FOR UPDATE`,
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            await client.query("ROLLBACK");
+
+            return {
+                type: "NOT_FOUND"
+            };
+        }
+
+        const currentStatus = result.rows[0].status;
+        const allowedTransitions =
+            ALLOWED_STATUS_TRANSITIONS[currentStatus] || [];
+
+        if (!allowedTransitions.includes(newStatus)) {
+            await client.query("ROLLBACK");
+
+            return {
+                type: "INVALID_TRANSITION",
+                currentStatus,
+                requestedStatus: newStatus,
+                allowedTransitions
+            };
+        }
+
+        const updated = await client.query(
+            `UPDATE events
+             SET status = $1
+             WHERE id = $2
+             RETURNING *`,
+            [newStatus, id]
+        );
+
+        await client.query("COMMIT");
+
+        return {
+            type: "SUCCESS",
+            event: updated.rows[0]
+        };
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 module.exports = {
     create,
     getAllEvents,
-    getEventById
+    getEventById,
+    updateEventStatus
 };

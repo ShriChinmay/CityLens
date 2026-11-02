@@ -45,8 +45,18 @@ const eventQuerySchema = z.object({
     camera_id: z.coerce.number().int().positive().optional()
 });
 
+const eventStatusSchema = z.object({
+    status: z.enum([
+        "DETECTED",
+        "VERIFIED",
+        "WORK_ORDER_ISSUED",
+        "RESOLVED",
+        "AUDITED"
+    ])
+});
 
 module.exports = {
     eventSchema,
-    eventQuerySchema
+    eventQuerySchema,
+    eventStatusSchema
 };
