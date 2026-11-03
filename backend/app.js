@@ -8,7 +8,7 @@ const evidenceRoutes = require("./routes/evidence.routes");
 const errorHandler = require("./middlewares/error.middleware");
 const app = express();
 const path = require("path");
-
+const workOrderRoutes = require("./routes/workOrder.routes");
 const fs = require("fs");
 
 const evidenceDir = path.join(
@@ -37,5 +37,5 @@ app.use(
     express.static(path.join(__dirname, "uploads/evidence"))
 );
 app.use(errorHandler);
-
+app.use("/api/v1/work-orders", workOrderRoutes);
 module.exports = app;
