@@ -62,6 +62,37 @@ async function getEventById(req, res, next) {
     }
 }
 
+async function getEventObservations(req, res, next) {
+    try {
+        const eventId = Number(req.params.id);
+
+        if (!Number.isInteger(eventId) || eventId <= 0) {
+            return res.status(400).json({
+                message: "Invalid event ID"
+            });
+        }
+
+        // Check whether the incident exists.
+        const event = await eventService.getEventById(eventId);
+
+        if (!event) {
+            return res.status(404).json({
+                message: "Event not found"
+            });
+        }
+
+        const observations = await eventService.getEventObservations(eventId);
+
+        return res.status(200).json({
+            event_id: eventId,
+            observation_count: observations.length,
+            observations
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 async function updateEventStatus(req, res, next) {
     try {
         const id = Number(req.params.id);
@@ -114,5 +145,6 @@ module.exports = {
     createEvent,
     getAllEvents,
     getEventById,
-    updateEventStatus
+    updateEventStatus,
+    getEventObservations
 };

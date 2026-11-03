@@ -375,6 +375,19 @@ async function getEventById(id) {
     return result.rows[0];
 }
 
+async function getEventObservations(eventId) {
+    const query = `
+        SELECT *
+        FROM event_observations
+        WHERE event_id = $1
+        ORDER BY observed_at DESC, id DESC;
+    `;
+
+    const result = await pool.query(query, [eventId]);
+
+    return result.rows;
+}
+
 async function updateEventStatus(id, newStatus) {
     const client = await pool.connect();
 
@@ -438,5 +451,6 @@ module.exports = {
     create,
     getAllEvents,
     getEventById,
-    updateEventStatus
+    updateEventStatus,
+    getEventObservations
 };
