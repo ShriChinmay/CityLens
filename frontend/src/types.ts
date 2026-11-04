@@ -39,6 +39,10 @@ export interface RoadEvent {
   metadata?: Record<string, unknown> | null;
   evidence_url?: string | null;
   created_at?: string;
+  status?: EventStatus;
+  detection_count?: number;
+  first_seen_at?: string;
+  last_seen_at?: string;
 }
 
 export interface EventFilters {
@@ -66,4 +70,31 @@ export interface CamerasResponse {
 export interface HealthResponse {
   status: string;
   online?: boolean;
+}
+
+export type EventStatus =
+  | 'DETECTED'
+  | 'VERIFIED'
+  | 'WORK_ORDER_ISSUED'
+  | 'RESOLVED'
+  | 'AUDITED';
+
+export interface EventObservation {
+  id: Id;
+  event_id: Id;
+  bus_id: Id;
+  camera_id: Id;
+  observed_at: string;
+  latitude: Numeric;
+  longitude: Numeric;
+  confidence: Numeric;
+  metadata?: Record<string, unknown> | null;
+  evidence_url?: string | null;
+  created_at?: string;
+}
+
+export interface EventObservationsResponse {
+  event_id: Id;
+  observation_count: number;
+  observations: EventObservation[];
 }

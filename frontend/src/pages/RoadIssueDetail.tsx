@@ -9,7 +9,13 @@ import { ConfidenceMeter } from '../components/ConfidenceMeter';
 import { EvidenceViewer } from '../components/EvidenceViewer';
 import { EventMap } from '../components/EventMap';
 import { EmptyState } from '../components/EmptyState';
-import { fetchBusById, fetchCameraById, fetchEventById } from '../api/client';
+import {
+  fetchBusById,
+  fetchCameraById,
+  fetchEventById,
+  fetchEventObservations,
+  updateEventStatus,
+} from '../api/client';
 import { cn } from '../lib/cn';
 import { buttonSecondaryClass } from '../lib/ui';
 import {
@@ -21,7 +27,13 @@ import {
   severityLabel,
   toNumber,
 } from '../lib/format';
-import type { Bus, Camera, RoadEvent } from '../types';
+import type {
+  Bus,
+  Camera,
+  EventObservation,
+  EventStatus,
+  RoadEvent,
+} from '../types';
 
 function humanizeKey(key: string): string {
   return key
@@ -71,6 +83,26 @@ function DetailRow({
     </div>
   );
 }
+const incidentStatusStyles: Record<EventStatus, string> = {
+  DETECTED: 'border-medium-line bg-medium-soft text-medium',
+  VERIFIED: 'border-low-line bg-low-soft text-low',
+  WORK_ORDER_ISSUED: 'border-brand/20 bg-brand/10 text-brand',
+  RESOLVED: 'border-low-line bg-low-soft text-low',
+  AUDITED: 'border-line bg-surface-2 text-ink-subtle',
+};
+
+function incidentStatusLabel(status: EventStatus): string {
+  return status.replace(/_/g, ' ');
+}
+
+const nextIncidentStatus: Partial<
+  Record<EventStatus, { status: EventStatus; label: string }>
+> = {
+  DETECTED: { status: 'VERIFIED', label: 'Verify incident' },
+  VERIFIED: { status: 'WORK_ORDER_ISSUED', label: 'Issue work order' },
+  WORK_ORDER_ISSUED: { status: 'RESOLVED', label: 'Mark as resolved' },
+  RESOLVED: { status: 'AUDITED', label: 'Complete audit' },
+};
 
 export default function RoadIssueDetail() {
   const { id } = useParams<{ id: string }>();
@@ -78,12 +110,47 @@ export default function RoadIssueDetail() {
   const [bus, setBus] = useState<Bus | null>(null);
   const [camera, setCamera] = useState<Camera | null>(null);
   const [loading, setLoading] = useState(true);
+  const [observations, setObservations] = useState<EventObservation[]>([]);
+  const [observationsError, setObservationsError] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [statusError, setStatusError] = useState('');
+
+  async function handleStatusUpdate(nextStatus: EventStatus) {
+    if (!id || updatingStatus) return;
+
+    setUpdatingStatus(true);
+    setStatusError('');
+
+    try {
+      const response = await updateEventStatus(id, nextStatus);
+      setEvent(response.event);
+    } catch (error) {
+      setStatusError(
+        error instanceof Error ? error.message : 'Failed to update incident status.'
+      );
+    } finally {
+      setUpdatingStatus(false);
+    }
+  }
 
   useEffect(() => {
     let active = true;
     if (!id) return;
 
     setLoading(true);
+    
+    
+
+    setObservations([]);
+    setObservationsError(false);
+
+    fetchEventObservations(id)
+      .then((response) => {
+        if (active) setObservations(response.observations);
+      })
+      .catch(() => {
+        if (active) setObservationsError(true);
+      });
     fetchEventById(id)
       .then((fetched) => {
         if (!active) return;
@@ -135,7 +202,9 @@ export default function RoadIssueDetail() {
   const latitude = toNumber(event.latitude);
   const longitude = toNumber(event.longitude);
   const hasCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
-
+  const currentTransition = event.status
+  ? nextIncidentStatus[event.status]
+  : undefined;
   return (
     <div className="space-y-6">
       <Link
@@ -158,6 +227,128 @@ export default function RoadIssueDetail() {
           </span>
         }
       />
+
+        <Surface>
+        <SurfaceHeader title="Incident lifecycle" />
+        <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <p className="text-xs text-ink-muted">Current status</p>
+            {event.status ? (
+              <span
+                className={cn(
+                  'mt-2 inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold',
+                  incidentStatusStyles[event.status]
+                )}
+              >
+                {incidentStatusLabel(event.status)}
+              </span>
+            ) : (
+              <p className="mt-2 text-sm text-ink-subtle">Not available</p>
+            )}
+          </div>
+
+          <div>
+            <p className="text-xs text-ink-muted">Total detections</p>
+            <p className="mt-2 text-lg font-semibold text-ink">
+              {event.detection_count ?? '—'}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-ink-muted">First observed</p>
+            <p className="mt-2 text-sm font-medium text-ink">
+              {event.first_seen_at
+                ? formatDateTime(event.first_seen_at)
+                : 'Not available'}
+            </p>
+          </div>
+
+          <div>
+            <p className="text-xs text-ink-muted">Last observed</p>
+            <p className="mt-2 text-sm font-medium text-ink">
+              {event.last_seen_at
+                ? formatDateTime(event.last_seen_at)
+                : 'Not available'}
+            </p>
+          </div>
+        </div>
+        <div className="border-t border-line px-4 py-3">
+          {currentTransition ? (
+            <button
+              type="button"
+              disabled={updatingStatus}
+              onClick={() => handleStatusUpdate(currentTransition.status)}
+              className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {updatingStatus
+                ? 'Updating...'
+                : currentTransition.label}
+            </button>
+          ) : (
+            <p className="text-sm text-ink-subtle">
+              {event.status === 'AUDITED'
+                ? 'This incident has completed its lifecycle.'
+                : 'Status transition unavailable.'}
+            </p>
+          )}
+
+          {statusError && (
+            <p className="mt-2 text-sm text-red-600">{statusError}</p>
+          )}
+        </div>
+      </Surface>
+
+      <Surface>
+      <SurfaceHeader
+        title="Detection history"
+        action={
+          <span className="text-xs text-ink-subtle">
+            {observations.length} observations
+          </span>
+        }
+      />
+
+      {observationsError ? (
+        <p className="px-4 py-4 text-sm text-ink-subtle">
+          Detection history is currently unavailable.
+        </p>
+      ) : observations.length === 0 ? (
+        <p className="px-4 py-4 text-sm text-ink-subtle">
+          No detection observations recorded yet.
+        </p>
+      ) : (
+        <div className="divide-y divide-line">
+          {observations.map((observation) => (
+            <div
+              key={observation.id}
+              className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-medium text-ink">
+                  Detection #{formatId(observation.id)}
+                </p>
+                <p className="mt-1 text-xs text-ink-muted">
+                  Bus #{formatId(observation.bus_id)} · Camera #{formatId(observation.camera_id)}
+                </p>
+                <p className="mt-1 text-xs text-ink-subtle">
+                  {formatCoords(observation.latitude, observation.longitude, 6)}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-sm font-medium text-ink">
+                  {formatDateTime(observation.observed_at)}
+                </p>
+                <p className="mt-1 text-xs text-ink-muted">
+                  Confidence: {Math.round(toNumber(observation.confidence) * 100)}%
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </Surface>
+
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-6">

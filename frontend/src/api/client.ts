@@ -4,6 +4,8 @@ import type {
   Camera,
   CamerasResponse,
   EventFilters,
+  EventStatus,
+  EventObservationsResponse,
   EventsResponse,
   HealthResponse,
   RoadEvent,
@@ -132,4 +134,28 @@ export function getEvidenceUrl(path?: string | null): string | null {
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   if (path.startsWith('/evidence/')) return path;
   return `/evidence/${path}`;
+}
+
+export async function fetchEventObservations(
+  id: string
+): Promise<EventObservationsResponse> {
+  return request<EventObservationsResponse>(
+    `${API_BASE}/events/${id}/observations`
+  );
+}
+
+export async function updateEventStatus(
+  id: string,
+  status: EventStatus
+): Promise<{ message: string; event: RoadEvent }> {
+  return request<{ message: string; event: RoadEvent }>(
+    `${API_BASE}/events/${id}/status`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    }
+  );
 }
