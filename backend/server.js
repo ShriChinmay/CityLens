@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+require("./mqtt/mqtt.consumer");
 
 
 console.log({

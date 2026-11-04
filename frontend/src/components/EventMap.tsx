@@ -82,7 +82,7 @@ export function EventMap({
   className,
 }: EventMapProps) {
   // Basemap style toggle: defaults to clean light GIS map ('kinda white')
-  const [mapStyle, setMapStyle] = useState<MapStyle>('light');
+  const [mapStyle, setMapStyle] = useState<MapStyle>('street');
 
   const validEvents = events.filter(
     (event) =>
