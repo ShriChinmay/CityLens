@@ -187,11 +187,3 @@ def handle_frame(image_path, lat, lon, bus_id, camera_id):
 - GPS must be supplied by the caller (bus GPS / device). The model itself does not geolocate.
 
 ---
-
-## 📄 Training summary
-
-- Dataset: `citylens-waterlogging-yolo26n`
-- Trained on: A40 GPU (Docker environment)
-- Start time: Nov 5, 2026, 12:15 PM UTC
-- Compute cost: ~$0.08
-```
